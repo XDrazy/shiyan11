@@ -1,4 +1,4 @@
-// 1. 定义双向迭代器接口
+// 1. 迭代器接口
 interface BidirectionalIterator {
     boolean hasNext();
     String next();
@@ -6,15 +6,20 @@ interface BidirectionalIterator {
     String previous();
 }
 
-// 2. 商品集合类
-class ProductCollection {
+// 2. 聚合对象接口
+interface Aggregate {
+    BidirectionalIterator createIterator();
+}
+
+// 3. 具体聚合对象
+class ProductCollection implements Aggregate {
     private String[] products;
 
     public ProductCollection(String[] products) {
         this.products = products;
     }
 
-    // 工厂方法，创建双向迭代器
+    @Override
     public BidirectionalIterator createIterator() {
         return new ProductBidirectionalIterator(this);
     }
@@ -24,14 +29,14 @@ class ProductCollection {
     }
 }
 
-// 3. 双向迭代器实现
+// 4. 具体迭代器
 class ProductBidirectionalIterator implements BidirectionalIterator {
     private ProductCollection collection;
-    private int current; // 指向当前位置
+    private int current;
 
     public ProductBidirectionalIterator(ProductCollection collection) {
         this.collection = collection;
-        this.current = 0; // 初始指向第一个元素
+        this.current = 0;
     }
 
     @Override
@@ -61,11 +66,11 @@ class ProductBidirectionalIterator implements BidirectionalIterator {
     }
 }
 
-// 4. 测试
+// 5. 测试
 public class SearchDemo {
     public static void main(String[] args) {
         String[] products = {"iPhone", "iPad", "MacBook", "Apple Watch"};
-        ProductCollection collection = new ProductCollection(products);
+        Aggregate collection = new ProductCollection(products);
         BidirectionalIterator iterator = collection.createIterator();
 
         System.out.println("正向遍历：");
